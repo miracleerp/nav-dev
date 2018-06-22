@@ -1,0 +1,97 @@
+OBJECT Table 3 Payment Terms
+{
+  OBJECT-PROPERTIES
+  {
+    Date=11/05/08;
+    Time=12:00:00 PM;
+    Version List=NAVW16.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=VAR
+               PaymentTermsTranslation@1000 : Record 462;
+             BEGIN
+               WITH PaymentTermsTranslation DO BEGIN
+                 SETRANGE("Payment Term",Code);
+                 DELETEALL
+               END;
+             END;
+
+    CaptionML=[ENU=Payment Terms;
+               FRA=Conditions de paiement;
+               ESM=T‚rminos pago;
+               PTG=Termos Pagamento;
+               FRC=Modalit‚s de paiement;
+               ENC=Payment Terms];
+    LookupFormID=Form4;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              FRA=Code;
+                                                              ESM=C¢digo;
+                                                              PTG=C¢digo;
+                                                              FRC="Code  ";
+                                                              ENC=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Due Date Calculation;DateFormula   ;CaptionML=[ENU=Due Date Calculation;
+                                                              FRA=Calcul date ‚ch‚ance;
+                                                              ESM=C lculo de fecha de vencimiento;
+                                                              PTG=C lculo Data Vencimento;
+                                                              FRC=Calcul date d'‚ch‚ance;
+                                                              ENC=Due Date Calculation] }
+    { 3   ;   ;Discount Date Calculation;DateFormula;
+                                                   CaptionML=[ENU=Discount Date Calculation;
+                                                              FRA=Calcul date d'escompte;
+                                                              ESM=Fecha c lculo dto. P.P.;
+                                                              PTG=C lculo Data Desconto;
+                                                              FRC=Calcul date d'escompte;
+                                                              ENC=Discount Date Calculation] }
+    { 4   ;   ;Discount %          ;Decimal       ;CaptionML=[ENU=Discount %;
+                                                              FRA=% remise;
+                                                              ESM=% Descuento;
+                                                              PTG=% Desconto;
+                                                              FRC="% escompte ";
+                                                              ENC=Discount %];
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0;
+                                                   MaxValue=100 }
+    { 5   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              FRA=D‚signation;
+                                                              ESM=Descripci¢n;
+                                                              PTG=Descri‡Æo;
+                                                              FRC=Description;
+                                                              ENC=Description] }
+    { 6   ;   ;Calc. Pmt. Disc. on Cr. Memos;Boolean;
+                                                   CaptionML=[ENU=Calc. Pmt. Disc. on Cr. Memos;
+                                                              FRA=Calculer escompte sur avoirs;
+                                                              ESM=Calc. dto. P.P. en cr‚ditos;
+                                                              PTG=Calc. Dsct. P.P. em N.Cr‚dito;
+                                                              FRC=Calc. escompte sur notes cr‚d.;
+                                                              ENC=Calc. Pmt. Disc. on Cr. Memos] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,Description,Due Date Calculation    }
+  }
+  CODE
+  {
+
+    PROCEDURE TranslateDescription@1(VAR PaymentTerms@1000 : Record 3;Language@1001 : Code[10]);
+    VAR
+      PaymentTermsTranslation@1002 : Record 462;
+    BEGIN
+      IF PaymentTermsTranslation.GET(PaymentTerms.Code,Language) THEN
+        PaymentTerms.Description := PaymentTermsTranslation.Description;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+
